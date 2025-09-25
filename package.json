@@ -5,6 +5,9 @@
   "author": "Andres Galindo <sharlly1329g@gmail.com>",
   "license": "MIT",
   "private": false,
+  "scripts": {
+    "dev": "nodemon index.js"
+  },
   "devDependencies": {
     "nodemon": "^3.1.10"
   }
