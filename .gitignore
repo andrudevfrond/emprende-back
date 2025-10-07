@@ -1,5 +1,5 @@
 /node_modules
 /javascript
-/public
+##/public
 another.js
 .env
