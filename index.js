@@ -26,28 +26,28 @@ app.use(express.static('public'))
 app.use(express.json())
 
 // A Pasamos una funcion anonima
-app.use((req, res, next) =>{
-    console.log("No especificamos como debe ser el inicio de la ruta")
-    console.log("middleware 1")
-    next()
-})
+// app.use((req, res, next) =>{
+//     console.log("No especificamos como debe ser el inicio de la ruta")
+//     console.log("middleware 1")
+//     next()
+// })
 
 // B Pasamos una funcion RETORNADA por OTRA FUNCION/METODO
-const logger = {
-    logThis : (whatToLog) =>{
-        return (req, res, next) => {
-            console.log("Middleware 2: ", whatToLog);
-            next()
-        }
-    },
-}
+// const logger = {
+//     logThis : (whatToLog) =>{
+//         return (req, res, next) => {
+//             console.log("Middleware 2: ", whatToLog);
+//             next()
+//         }
+//     },
+// }
 
-app.use("/andres", logger.logThis("loggeame esto") )
+// app.use("/andres", logger.logThis("loggeame esto") )
 
-// configurar rutas
-app.get('/', (req, res)=> {
-    res.send("hello world!")
-})
+// // configurar rutas
+// app.get('/', (req, res)=> {
+//     res.send("hello world!")
+// })
 
 app.get("/api/tasks", (req, res)=> {
     Task.find().then((tasks)=>{
