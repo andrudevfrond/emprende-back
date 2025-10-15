@@ -22,13 +22,17 @@ const getCode = async (req, res) => {
     userdb.Login_code = code
     await userdb.save()
 
-    const result = await transporter.sendMail({
-        from: `Andrés Galindo ${process.env.EMAIL}`,
-        to: email,
-        subject: "Código de inicio de sesión: " + code ,
-        body: "Este es tu código para iniciar sesión: " + code
-    })
-    res.status(200).json({ok: true, message:"Código enviado con éxito!"})
+    try {
+        const result = await transporter.sendMail({
+            from: `Andrés Galindo ${process.env.EMAIL}`,
+            to: email,
+            subject: "Código de inicio de sesión: " + code ,
+            body: "Este es tu código para iniciar sesión: " + code
+        })
+        res.status(200).json({ok: true, message:"Código enviado con éxito!"})
+    } catch (error) {
+        res.status(400).json({ok: false, message:`Ups!, Error: ${error}`})
+    }
 }
 
 const authenticate = async (req, res)=>{
