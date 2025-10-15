@@ -41,4 +41,5 @@ codeBtn.addEventListener("click", async function(e){
         method:"POST",
     })
     const resJson = await res.json()
+    Swal("Genial!", "Se envio el código a su correo", "info")
 })
