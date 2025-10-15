@@ -5,74 +5,71 @@ const input = document.querySelector("#task-name")
 const taskDiv = document.querySelector("#tasks")
 
 const baseUrl = `${window.origin}/api/`
-console.log({baseUrl})
 let TASK_TO_EDIT = null
 
 // nutrir de funcionalidad a los botones
-createEditBtn.addEventListener("click", function(){
+createEditBtn.addEventListener("click",async function(){
     
     const creating = !TASK_TO_EDIT
     const path = creating ? "tasks" :  `tasks/${TASK_TO_EDIT._id}`
     const method = creating ? "POST" : "PUT"
-    fetch(`${baseUrl}${path}`, {
+    
+    const tareas = await fetch(`${baseUrl}${path}`, {
         method,
         headers:{"Content-type": "application/json"},
         body: JSON.stringify({text :input.value}),
-    }).then((res)=> {
-        getTasks()
-        input.value = ""
-        createEditBtn.innerText = "Crear tarea"
-        TASK_TO_EDIT = null
-        return res.json()
-    }).then((resJSON)=>{
-        console.log({resJSON})
     })
+    
+    const resJson = await tareas.json()
+    
+    await getTasks()
+    input.value = ""
+    createEditBtn.innerText = "Crear tarea"
+    TASK_TO_EDIT = null
+
+    console.log({resJson})
 })
 
-function getTasks(){
+async function getTasks(){
 
     taskDiv.innerHTML = null
 
-    fetch(`${baseUrl}tasks`)
-    .then((res)=> {
-        return res.json()
-    }).then((resJSON)=>{
-        const tasks = resJSON.data
-        for (const task of tasks) {
+    const result = await fetch(`${baseUrl}tasks`)
+    const taskJson =  await result.json()
+    const tasks = taskJson.data
 
-            const taskContainerDiv = document.createElement('div')
+    for (const task of tasks) {
+        const taskContainerDiv = document.createElement('div')
+        const taskParagrafh = document.createElement('p')
+        taskParagrafh.innerText = task.name
 
-            const taskParagrafh = document.createElement('p')
-            taskParagrafh.innerText = task.name
+        const deleteTaskBtn = document.createElement('button')
+        deleteTaskBtn.innerText = "Borrar"
+        deleteTaskBtn.setAttribute('id', task._id)
 
-            const deleteTaskBtn = document.createElement('button')
-            deleteTaskBtn.innerText = "Borrar"
-            deleteTaskBtn.setAttribute('id', task._id)
-
-            deleteTaskBtn.addEventListener("click", (e)=>{
-                const taskId = e.target.id
-                deleteTaskBtn.innerText = "..."
-                fetch(`${baseUrl}task/${taskId}`, {
-                    method: "DELETE",
-                }).then(()=>{
-                    const taskDivDelete = deleteTaskBtn.parentElement
-                    taskDivDelete.remove()
-                })
+        deleteTaskBtn.addEventListener("click", (e)=>{
+            const taskId = e.target.id
+            deleteTaskBtn.innerText = "..."
+            fetch(`${baseUrl}tasks/${taskId}`, {
+                method: "DELETE",
+            }).then(()=>{
+                const taskDivDelete = deleteTaskBtn.parentElement
+                taskDivDelete.remove()
             })
+        })
 
-            taskParagrafh.addEventListener('click', (e)=>{
-            input.value = task.name
-            createEditBtn.innerText = "Editar tarea"
-            TASK_TO_EDIT = task
-            console.log({TASK_TO_EDIT})
-            })
+        taskParagrafh.addEventListener('click', (e)=>{
+        input.value = task.name
+        createEditBtn.innerText = "Editar tarea"
+        TASK_TO_EDIT = task
+        console.log({TASK_TO_EDIT})
+        })
 
-            taskContainerDiv.append(taskParagrafh)
-            taskContainerDiv.append(deleteTaskBtn)
+        taskContainerDiv.append(taskParagrafh)
+        taskContainerDiv.append(deleteTaskBtn)
 
-            taskDiv.append(taskContainerDiv)
-        }
-    })
+        taskDiv.append(taskContainerDiv)
+    }
 }
 
 getTasks()
